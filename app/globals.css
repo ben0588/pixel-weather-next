@@ -1,0 +1,261 @@
+@import "tailwindcss";
+
+:root {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-pixel: var(--font-pixel);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-pixel), monospace;
+}
+
+/* ====================================
+   像素圖片處理 - 保持鋸齒狀，不模糊
+   ==================================== */
+img, 
+.pixel-art {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+/* ====================================
+   像素字體類別
+   ==================================== */
+.font-pixel {
+  font-family: var(--font-pixel), monospace;
+  line-height: 1.6;
+}
+
+/* ====================================
+   雨滴動畫
+   ==================================== */
+.raindrop {
+  position: absolute;
+  width: 2px;
+  height: 20px;
+  background: linear-gradient(to bottom, transparent, rgba(174, 194, 224, 0.5), rgba(174, 194, 224, 0.8));
+  animation: fall linear infinite;
+  pointer-events: none;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(-100px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh);
+    opacity: 0.3;
+  }
+}
+
+/* ====================================
+   雪花動畫
+   ==================================== */
+.snowflake {
+  position: absolute;
+  font-size: 20px;
+  animation: snow linear infinite;
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+@keyframes snow {
+  0% {
+    transform: translateY(-100px) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(360deg);
+    opacity: 0.3;
+  }
+}
+
+/* ====================================
+   風的線條動畫
+   ==================================== */
+.wind-line {
+  position: absolute;
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: wind 2s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes wind {
+  0% {
+    left: -100px;
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
+}
+
+/* ====================================
+   角色動畫
+   ==================================== */
+@keyframes shiver {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-3px) rotate(-1deg);
+  }
+  75% {
+    transform: translateX(3px) rotate(1deg);
+  }
+}
+
+.animate-shiver {
+  animation: shiver 0.5s ease-in-out infinite;
+}
+
+@keyframes idle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.animate-idle {
+  animation: idle 2s ease-in-out infinite;
+}
+
+@keyframes bounce-slow {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow 3s ease-in-out infinite;
+}
+
+/* ====================================
+   雲朵動畫
+   ==================================== */
+@keyframes float {
+  0%, 100% {
+    transform: translateX(0) translateY(0);
+  }
+  50% {
+    transform: translateX(20px) translateY(-10px);
+  }
+}
+
+.animate-float {
+  animation: float 8s ease-in-out infinite;
+}
+
+.pixel-cloud {
+  filter: blur(8px);
+  opacity: 0.7;
+}
+
+/* ====================================
+   星星閃爍動畫
+   ==================================== */
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+.animate-twinkle {
+  animation: twinkle 3s ease-in-out infinite;
+}
+
+/* ====================================
+   漸入動畫
+   ==================================== */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.8s ease-out;
+}
+
+/* ====================================
+   樹木搖擺動畫（用於風的效果）
+   ==================================== */
+@keyframes sway {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(5deg);
+  }
+}
+
+.animate-sway {
+  animation: sway 2s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+/* ====================================
+   自訂 Scrollbar（像素風格）
+   ==================================== */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a1a1a;
+  border: 2px solid #333;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #555;
+  border: 2px solid #333;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}
+
+/* ====================================
+   選擇文字的顏色
+   ==================================== */
+::selection {
+  background: #fbbf24;
+  color: #000;
+}
+
+::-moz-selection {
+  background: #fbbf24;
+  color: #000;
+}
+
