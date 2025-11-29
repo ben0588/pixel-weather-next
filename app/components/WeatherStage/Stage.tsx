@@ -3,7 +3,6 @@
 import { useMemo } from 'react';
 import Image from 'next/image';
 import Background from './Background';
-import Character from './Character';
 import WeatherEffects from './WeatherEffects';
 
 interface StageProps {
@@ -27,9 +26,8 @@ export default function Stage({ weatherData }: StageProps) {
   const isSunny = weatherCode.includes('01') || weather?.includes('晴');
   const isWindy = windSpeed > 10;
 
-  // 根據天氣生成提示文字
+  // 根據天氣生成 RPG 風格提示文字
   const weatherPrompt = useMemo(() => {
-    // 優先判斷極端天氣
     if (isRaining || weather?.includes('雨')) {
       return '道路泥濘，建議在旅店休息（穿個雨衣吧）。';
     } else if (isSnowing || weather?.includes('雪')) {
@@ -41,7 +39,6 @@ export default function Stage({ weatherData }: StageProps) {
     } else if (temperature < 15) {
       return '寒風刺骨，裝備保暖道具可提升防禦力。';
     } else if (!isDay) {
-      // 夜晚且非極端天氣
       return '夜深了，黑暗中潛藏著危險與機會...';
     } else if (isSunny || weather?.includes('晴')) {
       return '適合出發冒險的日子！體力恢復速度 +10%。';
@@ -67,7 +64,7 @@ export default function Stage({ weatherData }: StageProps) {
         {/* 城鎮背景圖 - 天空透明 */}
         <div className="absolute bottom-0 left-0 w-full h-full">
           <Image 
-            src="/main-bg-new.svg" 
+            src="/bg-1129.png" 
             alt="Town Background"
             fill
             className=" object-contain object-bottom"
@@ -141,16 +138,14 @@ export default function Stage({ weatherData }: StageProps) {
           </div>
         )}
       </div>
-      
-      {/* ========== Z-30: 主角層 (Character Layer) ========== */}
-      <div className="absolute inset-0 flex items-end justify-center z-30 pb-4">
-        <Character 
-          weatherCode={weatherCode} 
-          temperature={temperature}
-          weatherPrompt={weatherPrompt}
-          isRaining={isRaining}
-          isSunny={isSunny && !isCloudy && !isRaining}
-        />
+
+      {/* ========== Z-30: 天氣提示層 (Weather Prompt) ========== */}
+      <div className="absolute inset-x-0 bottom-4 z-30 flex justify-center px-4">
+        <div className="mt-4 flex min-h-12 items-center justify-center gap-2 rounded-lg border-2 border-white/30 bg-black/50 px-4 py-2">
+          <p className="font-pixel flex items-center justify-center text-center text-xs leading-relaxed text-yellow-300">
+            {weatherPrompt}
+          </p>
+        </div>
       </div>
       
       {/* ========== Z-40: 天氣特效層 (Weather Effects) ========== */}
