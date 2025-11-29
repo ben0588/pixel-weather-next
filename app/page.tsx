@@ -8,19 +8,43 @@ import DebugMenu from './components/DebugMenu/DebugMenu';
 import { useIPLocation } from './hooks/useIPLocation';
 import { useWeather } from './hooks/useWeather';
 
+const CITY_STORAGE_KEY = 'pixel-weather-selected-city';
+
 export default function Home() {
   const { location, loading: locationLoading } = useIPLocation();
-  const [initialCity, setInitialCity] = useState('台北市');
+  const [initialCity, setInitialCity] = useState<string | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
   
-  // 當位置載入完成後，設定初始城市
+  // 初始化時從 localStorage 讀取城市
   useEffect(() => {
-    if (location?.city) {
-      setInitialCity(location.city);
+    // 優先使用 localStorage 儲存的城市
+    const savedCity = localStorage.getItem(CITY_STORAGE_KEY);
+    if (savedCity) {
+      setInitialCity(savedCity);
+      setIsInitialized(true);
     }
-  }, [location]);
+  }, []);
 
-  const { weatherData, loading: weatherLoading, updateCity, currentCity } = useWeather(initialCity);
+  // 當 IP 位置載入完成且沒有儲存的城市時，使用 IP 定位結果
+  useEffect(() => {
+    if (!isInitialized && !locationLoading) {
+      if (location?.city) {
+        setInitialCity(location.city);
+      } else {
+        setInitialCity('台北市'); // 預設城市
+      }
+      setIsInitialized(true);
+    }
+  }, [location, locationLoading, isInitialized]);
+
+  const { weatherData, loading: weatherLoading, updateCity, currentCity } = useWeather(initialCity || '台北市');
   
+  // 處理城市變更並儲存到 localStorage
+  const handleCityChange = (city: string) => {
+    localStorage.setItem(CITY_STORAGE_KEY, city);
+    updateCity(city);
+  };
+
   // 用於強制 DialogBox 重新掛載的 key
   const [dialogKey, setDialogKey] = useState(0);
   
@@ -152,7 +176,7 @@ export default function Home() {
                 {!isLoading && !overrideWeather && (
                   <LocationMenu 
                     currentCity={currentCity}
-                    onCityChange={updateCity}
+                    onCityChange={handleCityChange}
                   />
                 )}
                 {/* Loading Indicator when switching cities */}

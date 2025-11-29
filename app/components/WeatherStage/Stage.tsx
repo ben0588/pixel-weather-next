@@ -26,9 +26,14 @@ export default function Stage({ weatherData }: StageProps) {
   const isSunny = weatherCode.includes('01') || weather?.includes('晴');
   const isWindy = windSpeed > 10;
 
+  // 判斷是否為豪大雨
+  const isHeavyRain = weather?.includes('豪') || weather?.includes('大雨') || pop >= 90;
+
   // 根據天氣生成 RPG 風格提示文字
   const weatherPrompt = useMemo(() => {
-    if (isRaining || weather?.includes('雨')) {
+    if (isHeavyRain) {
+      return '⚠️ 暴風雨警報！怪物出沒率 +50%，建議待在安全區域。';
+    } else if (isRaining || weather?.includes('雨')) {
       return '道路泥濘，建議在旅店休息（穿個雨衣吧）。';
     } else if (isSnowing || weather?.includes('雪')) {
       return '這是冰霜巨龍的氣息嗎？記得多穿一件裝備。';
@@ -45,7 +50,7 @@ export default function Stage({ weatherData }: StageProps) {
     } else {
       return '天氣穩定，是探索未知領域的好時機。';
     }
-  }, [isRaining, isSnowing, isWindy, isSunny, isDay, temperature, weather]);
+  }, [isHeavyRain, isRaining, isSnowing, isWindy, isSunny, isDay, temperature, weather]);
   
   return (
     <div className="relative w-full h-[330px] rounded-lg overflow-hidden border-4 border-black shadow-2xl">

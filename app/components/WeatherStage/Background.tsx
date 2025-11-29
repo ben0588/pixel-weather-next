@@ -27,14 +27,17 @@ export default function Background({ isDay, weatherCode, isCloudy = false, isRai
     }
   }, [currentHour]);
 
-  // 判斷時段
+  // 判斷時段（簡化為早上/下午/夜晚）
+  // 優先使用 isDay props（Debug 模式可覆寫）
   const timeOfDay = useMemo(() => {
-    if (hour >= 6 && hour < 12) return 'morning';      // 早上 6-12
-    if (hour >= 12 && hour < 15) return 'afternoon';   // 下午 12-15
-    if (hour >= 15 && hour < 17) return 'sunset';      // 夕陽 15-17
-    if (hour >= 17 && hour < 19) return 'dusk';        // 傍晚 17-19
-    return 'night';                                     // 夜晚 19-6
-  }, [hour]);
+    // 如果 isDay=true，強制白天模式
+    if (isDay) {
+      if (hour >= 6 && hour < 12) return 'morning';
+      return 'afternoon'; // 白天預設為下午
+    }
+    // 如果 isDay=false，強制夜晚模式
+    return 'night';
+  }, [hour, isDay]);
 
   // 根據時間和天氣獲取天空漸層
   const getSkyGradient = useMemo(() => {
@@ -67,28 +70,17 @@ export default function Background({ isDay, weatherCode, isCloudy = false, isRai
       case 'afternoon':
         // 下午 - 明亮藍天
         return 'linear-gradient(180deg, #0077be 0%, #1e90ff 25%, #4aa8ff 50%, #87ceeb 75%, #b0e2ff 100%)';
-      case 'sunset':
-        // 夕陽 (15-17點) - 橙紅漸層
-        return 'linear-gradient(180deg, #4a90cc 0%, #87ceeb 20%, #ffd89b 50%, #ff9966 75%, #ff6b6b 100%)';
-      case 'dusk':
-        // 傍晚 (17-19點) - 紫橘漸層
-        return 'linear-gradient(180deg, #2c2c54 0%, #474787 25%, #6b5b95 40%, #d4a5a5 60%, #ffb88c 80%, #de6262 100%)';
       case 'night':
       default:
-        // 夜晚 - 深紫到深藍漸層
+        // 夜晚 - 深紫到深藍漸層（原版漂亮的版本）
         return 'linear-gradient(180deg, #0f0c29 0%, #1a1a4a 25%, #24243e 50%, #2c2c54 75%, #302b63 100%)';
     }
   }, [isDay, weatherCode, isCloudy, isRaining, timeOfDay]);
 
-  // 判斷是否顯示夕陽光暈
-  const showSunsetGlow = useMemo(() => {
-    return !isRaining && !isCloudy && (timeOfDay === 'sunset' || timeOfDay === 'dusk');
-  }, [isRaining, isCloudy, timeOfDay]);
-
-  // 判斷是否為夜晚時段（包含傍晚後段）
+  // 判斷是否為夜晚時段（基於 isDay props）
   const isNightTime = useMemo(() => {
-    return timeOfDay === 'night' || (timeOfDay === 'dusk' && hour >= 18);
-  }, [timeOfDay, hour]);
+    return !isDay;
+  }, [isDay]);
 
   // 生成星星 (僅夜晚/傍晚後段且非陰雨天)
   useEffect(() => {
@@ -115,63 +107,7 @@ export default function Background({ isDay, weatherCode, isCloudy = false, isRai
       className="absolute inset-0 z-0 transition-all duration-1000"
       style={{ background: getSkyGradient }}
     >
-      {/* 夕陽光暈效果 */}
-      {showSunsetGlow && (
-        <div className="absolute inset-0 pointer-events-none">
-          {/* 太陽光暈 (右下方) */}
-          <div 
-            className="absolute bottom-10 right-20 w-32 h-32 rounded-full animate-pulse"
-            style={{
-              background: timeOfDay === 'sunset' 
-                ? 'radial-gradient(circle, rgba(255,200,100,0.8) 0%, rgba(255,150,50,0.4) 40%, transparent 70%)'
-                : 'radial-gradient(circle, rgba(255,100,100,0.6) 0%, rgba(200,50,100,0.3) 40%, transparent 70%)',
-              filter: 'blur(15px)',
-            }}
-          />
-          {/* 夕陽本體 */}
-          <div 
-            className="absolute bottom-16 right-24 w-12 h-12 rounded-full"
-            style={{
-              background: timeOfDay === 'sunset'
-                ? 'radial-gradient(circle, #ffdd00 0%, #ff9900 50%, #ff6600 100%)'
-                : 'radial-gradient(circle, #ff6b6b 0%, #de6262 50%, #a82828 100%)',
-              boxShadow: timeOfDay === 'sunset'
-                ? '0 0 40px rgba(255,150,0,0.8), 0 0 80px rgba(255,100,0,0.4)'
-                : '0 0 30px rgba(255,100,100,0.6), 0 0 60px rgba(200,50,50,0.3)',
-            }}
-          />
-        </div>
-      )}
-
-      {/* 月亮 (夜晚時) */}
-      {isNightTime && !isRaining && (
-        <div className="absolute top-8 right-16 pointer-events-none">
-          {/* 月光光暈 */}
-          <div 
-            className="absolute -inset-6 rounded-full"
-            style={{
-              background: 'radial-gradient(circle, rgba(200,220,255,0.3) 0%, rgba(150,180,220,0.1) 50%, transparent 70%)',
-              filter: 'blur(10px)',
-            }}
-          />
-          {/* 月亮本體 - 新月造型 */}
-          <div 
-            className="relative w-10 h-10 rounded-full overflow-hidden"
-            style={{
-              background: 'linear-gradient(135deg, #f5f5dc 0%, #e6e6c8 50%, #d4d4aa 100%)',
-              boxShadow: '0 0 30px rgba(200,220,255,0.5)',
-            }}
-          >
-            {/* 月球陰影創造新月效果 */}
-            <div 
-              className="absolute -right-3 -top-1 w-10 h-12 rounded-full"
-              style={{
-                background: getSkyGradient,
-              }}
-            />
-          </div>
-        </div>
-      )}
+     
       
       {/* 星星 (夜晚晴朗時) */}
       {isNightTime && stars.length > 0 && (
