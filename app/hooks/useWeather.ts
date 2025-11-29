@@ -11,6 +11,9 @@ interface WeatherData {
   humidity: number;
   windSpeed: number;
   isDay: boolean;
+  pop?: number; // 降雨機率
+  isRaining?: boolean;
+  isWindy?: boolean;
   observationTime?: string;
   error?: string;
 }
@@ -20,6 +23,13 @@ export function useWeather(initialCity: string = '台北市') {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentCity, setCurrentCity] = useState(initialCity);
+
+  // 當 initialCity 變化時同步更新 currentCity
+  useEffect(() => {
+    if (initialCity && initialCity !== currentCity) {
+      setCurrentCity(initialCity);
+    }
+  }, [initialCity]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchWeather = useCallback(async (city: string) => {
     try {
