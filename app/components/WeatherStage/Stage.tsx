@@ -23,7 +23,10 @@ export default function Stage({ weatherData, isDebugMode = false }: StageProps) 
   // 判斷天氣狀態
   const isRaining = weatherCode.includes('10') || weather?.includes('雨') || pop > 70;
   const isSnowing = weatherCode.includes('13') || weather?.includes('雪');
-  const isCloudy = weatherCode.includes('02') || weatherCode.includes('03') || weatherCode.includes('04') || weather?.includes('雲') || weather?.includes('陰');
+  // 「晴時多雲」不算陰天（天空顏色用），只有「多雲」「陰天」才算
+  const isCloudy = (weatherCode.includes('03') || weatherCode.includes('04') || weather?.includes('陰')) && !weather?.includes('晴');
+  // 顯示雲朵動畫（包括晴時多雲、多雲、陰天、有風）
+  const showClouds = weatherCode.includes('02') || weatherCode.includes('03') || weatherCode.includes('04') || weather?.includes('雲') || weather?.includes('陰');
   const isSunny = weatherCode.includes('01') || weather?.includes('晴');
   const isWindy = windSpeed > 10;
 
@@ -61,6 +64,7 @@ export default function Stage({ weatherData, isDebugMode = false }: StageProps) 
         isDay={isDay} 
         weatherCode={weatherCode}
         isCloudy={isCloudy}
+        showClouds={showClouds}
         isRaining={isRaining}
         isWindy={isWindy}
         forceTimeOverride={isDebugMode}

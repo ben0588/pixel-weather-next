@@ -18,13 +18,14 @@ interface BackgroundProps {
   isDay: boolean;
   weatherCode: string;
   isCloudy?: boolean;
+  showClouds?: boolean; // 顯示雲朵動畫（包括晴時多雲）
   isRaining?: boolean;
   isWindy?: boolean;
   currentHour?: number; // 當前小時 (0-23)
   forceTimeOverride?: boolean; // Debug 模式強制覆蓋時間
 }
 
-export default function Background({ isDay, weatherCode, isCloudy = false, isRaining = false, isWindy = false, currentHour, forceTimeOverride = false }: BackgroundProps) {
+export default function Background({ isDay, weatherCode, isCloudy = false, showClouds = false, isRaining = false, isWindy = false, currentHour, forceTimeOverride = false }: BackgroundProps) {
   const [stars, setStars] = useState<Array<{id: number, left: string, top: string, delay: string, size: number, opacity: number}>>([]);
   const [hour, setHour] = useState<number>(currentHour ?? getTaiwanHour());
 
@@ -61,26 +62,26 @@ export default function Background({ isDay, weatherCode, isCloudy = false, isRai
   const getSkyGradient = useMemo(() => {
     // 雨天/暴風雨 - 深灰色調
     if (isRaining || weatherCode.includes('10')) {
-      return isDay 
+      return effectiveIsDay 
         ? 'linear-gradient(180deg, #4a5568 0%, #718096 30%, #a0aec0 70%, #cbd5e0 100%)' // 白天雨天
         : 'linear-gradient(180deg, #1a202c 0%, #2d3748 40%, #4a5568 80%, #718096 100%)'; // 夜晚雨天
     }
     
     // 雪天 - 偏白灰藍
     if (weatherCode.includes('13')) {
-      return isDay
+      return effectiveIsDay
         ? 'linear-gradient(180deg, #e2e8f0 0%, #cbd5e0 40%, #a0aec0 100%)'
         : 'linear-gradient(180deg, #2d3748 0%, #4a5568 50%, #718096 100%)';
     }
     
-    // 陰天/多雲
+    // 陰天/多雲（不包括晴時多雲）
     if (isCloudy) {
-      return isDay
+      return effectiveIsDay
         ? 'linear-gradient(180deg, #87a4c4 0%, #a8c4db 40%, #c9dae8 70%, #e8f0f5 100%)' // 白天陰天
         : 'linear-gradient(180deg, #1e2a3a 0%, #2c3e50 50%, #34495e 100%)'; // 夜晚陰天
     }
     
-    // 根據時段返回不同天空
+    // 根據時段返回不同天空（晴天/晴時多雲）
     switch (timeOfDay) {
       case 'morning':
         // 早晨 - 清新藍天
@@ -93,17 +94,17 @@ export default function Background({ isDay, weatherCode, isCloudy = false, isRai
         // 夜晚 - 深紫到深藍漸層（原版漂亮的版本）
         return 'linear-gradient(180deg, #0f0c29 0%, #1a1a4a 25%, #24243e 50%, #2c2c54 75%, #302b63 100%)';
     }
-  }, [isDay, weatherCode, isCloudy, isRaining, timeOfDay]);
+  }, [effectiveIsDay, weatherCode, isCloudy, isRaining, timeOfDay]);
 
   // 判斷是否為夜晚時段
   const isNightTime = useMemo(() => {
     return !effectiveIsDay;
   }, [effectiveIsDay]);
 
-  // 生成星星 (僅夜晚/傍晚後段且非陰雨天)
+  // 生成星星 (夜晚且非雨天時顯示)
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (isNightTime && !isRaining && !isCloudy) {
+      if (isNightTime && !isRaining) {
         const newStars = Array.from({ length: 35 }).map((_, i) => ({
           id: i,
           left: `${Math.random() * 100}%`,
@@ -148,8 +149,8 @@ export default function Background({ isDay, weatherCode, isCloudy = false, isRai
         </div>
       )}
       
-      {/* 雲朵 (陰天/多雲時) */}
-      {isCloudy && isDay && (
+      {/* 雲朵 (多雲/陰天/晴時多雲時) */}
+      {showClouds && effectiveIsDay && (
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           {/* 雲朵 1 - 大型蓬鬆雲 */}
           <div className="absolute top-6 -left-10 animate-cloud-drift" style={{ animationDuration: isWindy ? '12s' : '35s' }}>
@@ -210,8 +211,8 @@ export default function Background({ isDay, weatherCode, isCloudy = false, isRai
         </div>
       )}
 
-      {/* 夜晚雲朵 (陰天夜晚時) */}
-      {isCloudy && !isDay && (
+      {/* 夜晚雲朵 (多雲/陰天/晴時多雲夜晚時) */}
+      {showClouds && !effectiveIsDay && (
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           {/* 夜晚雲朵 1 */}
           <div className="absolute top-8 -left-10 animate-cloud-drift" style={{ animationDuration: isWindy ? '14s' : '40s' }}>
