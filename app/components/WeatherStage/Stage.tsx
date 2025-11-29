@@ -64,7 +64,7 @@ export default function Stage({ weatherData }: StageProps) {
         {/* 城鎮背景圖 - 天空透明 */}
         <div className="absolute bottom-0 left-0 w-full h-full">
           <Image 
-            src="/bg-1129.png" 
+            src="/bg-new-1129.png" 
             alt="Town Background"
             fill
             className=" object-contain object-bottom"
