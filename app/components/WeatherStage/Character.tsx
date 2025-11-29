@@ -66,17 +66,6 @@ export default function Character({
 
       {/* 角色狀態指示 */}
       <div className="mt-4 flex min-h-12 items-center justify-center gap-2 rounded-lg border-2 border-white/30 bg-black/50 px-4 py-2">
-        {/* 天氣小圖示 */}
-        {isRaining && (
-          <span className="animate-bounce text-lg" title="史萊姆喜歡潮濕天氣">
-            🫐
-          </span>
-        )}
-        {isSunny && (
-          <span className="animate-pulse text-lg" title="火元素精靈出沒">
-            🔥
-          </span>
-        )}
         <p className="font-pixel flex items-center justify-center text-center text-xs leading-relaxed text-yellow-300">
           {weatherPrompt ?? (
             <>
@@ -87,23 +76,6 @@ export default function Character({
             </>
           )}
         </p>
-        {/* 右側天氣小圖示 (對稱) */}
-        {isRaining && (
-          <span
-            className="animate-bounce text-lg"
-            style={{ animationDelay: "0.2s" }}
-          >
-            🫐
-          </span>
-        )}
-        {isSunny && (
-          <span
-            className="animate-pulse text-lg"
-            style={{ animationDelay: "0.3s" }}
-          >
-            🔥
-          </span>
-        )}
       </div>
     </div>
   );
