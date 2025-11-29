@@ -3,6 +3,22 @@
 import { useState, useEffect } from "react";
 import Typewriter from "./Typewriter";
 
+// 取得台灣時間資訊 (UTC+8)
+const getTaiwanTime = () => {
+  const now = new Date();
+  const options: Intl.DateTimeFormatOptions = { timeZone: 'Asia/Taipei' };
+  
+  const hour = parseInt(now.toLocaleString('en-US', { ...options, hour: 'numeric', hour12: false }), 10);
+  const minute = parseInt(now.toLocaleString('en-US', { ...options, minute: 'numeric' }), 10);
+  const dayOfWeek = parseInt(now.toLocaleString('en-US', { ...options, weekday: 'short' }).charAt(0), 10) || now.toLocaleString('en-US', { ...options, weekday: 'short' });
+  
+  // 取得台灣時間的星期幾
+  const taiwanDate = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Taipei' }));
+  const weekdayIndex = taiwanDate.getDay();
+  
+  return { hour, minute, weekdayIndex };
+};
+
 interface DialogBoxProps {
   weatherData: {
     city: string;
@@ -25,13 +41,15 @@ export default function DialogBox({ weatherData }: Readonly<DialogBoxProps>) {
 
   useEffect(() => {
     const updateTime = () => {
-      const now = new Date();
-      const hour = now.getHours();
+      const { hour, weekdayIndex } = getTaiwanTime();
       const weekdays = ["日", "一", "二", "三", "四", "五", "六"];
-      const weekday = weekdays[now.getDay()];
+      const weekday = weekdays[weekdayIndex];
 
+      // 使用台灣時區格式化時間
+      const now = new Date();
       const formatted = now
         .toLocaleString("zh-TW", {
+          timeZone: "Asia/Taipei",
           month: "2-digit",
           day: "2-digit",
           hour: "2-digit",

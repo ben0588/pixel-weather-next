@@ -2,6 +2,18 @@
 
 import { useEffect, useState, useMemo } from 'react';
 
+// 取得台灣時間的小時 (UTC+8)
+const getTaiwanHour = (): number => {
+  const now = new Date();
+  // 使用 toLocaleString 取得台灣時區的時間
+  const taiwanTime = now.toLocaleString('en-US', { 
+    timeZone: 'Asia/Taipei',
+    hour: 'numeric',
+    hour12: false 
+  });
+  return parseInt(taiwanTime, 10);
+};
+
 interface BackgroundProps {
   isDay: boolean;
   weatherCode: string;
@@ -14,14 +26,14 @@ interface BackgroundProps {
 
 export default function Background({ isDay, weatherCode, isCloudy = false, isRaining = false, isWindy = false, currentHour, forceTimeOverride = false }: BackgroundProps) {
   const [stars, setStars] = useState<Array<{id: number, left: string, top: string, delay: string, size: number, opacity: number}>>([]);
-  const [hour, setHour] = useState<number>(currentHour ?? new Date().getHours());
+  const [hour, setHour] = useState<number>(currentHour ?? getTaiwanHour());
 
-  // 更新當前小時
+  // 更新當前小時（使用台灣時區）
   useEffect(() => {
     if (currentHour !== undefined) {
       setHour(currentHour);
     } else {
-      const updateHour = () => setHour(new Date().getHours());
+      const updateHour = () => setHour(getTaiwanHour());
       updateHour();
       const interval = setInterval(updateHour, 60000);
       return () => clearInterval(interval);

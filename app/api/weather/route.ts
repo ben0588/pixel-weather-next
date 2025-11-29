@@ -97,7 +97,11 @@ export async function GET(request: NextRequest) {
     if (!API_KEY) {
       console.warn('警告: CWA_API_KEY 未設定，返回預設天氣資料');
       const now = new Date();
-      const hour = now.getHours();
+      const taiwanHour = parseInt(now.toLocaleString('en-US', { 
+        timeZone: 'Asia/Taipei',
+        hour: 'numeric',
+        hour12: false 
+      }), 10);
       return NextResponse.json({
         city: targetLocationName,
         locationName: targetLocationName,
@@ -106,7 +110,7 @@ export async function GET(request: NextRequest) {
         weatherCode: '02',
         humidity: 60,
         windSpeed: 2.0,
-        isDay: hour >= 6 && hour < 18,
+        isDay: taiwanHour >= 6 && taiwanHour < 18,
         observationTime: now.toISOString(),
         error: 'API Key 未設定，顯示預設資料'
       });
@@ -237,10 +241,14 @@ export async function GET(request: NextRequest) {
       weatherCode = '02'; // 多雲
     }
     
-    // 判斷日夜
+    // 判斷日夜（使用台灣時區 UTC+8）
     const now = new Date();
-    const hour = now.getHours();
-    const isDay = hour >= 6 && hour < 18;
+    const taiwanHour = parseInt(now.toLocaleString('en-US', { 
+      timeZone: 'Asia/Taipei',
+      hour: 'numeric',
+      hour12: false 
+    }), 10);
+    const isDay = taiwanHour >= 6 && taiwanHour < 18;
     
     // 判斷是否為強風 (風速 > 10 m/s 視為強風)
     const isWindy = windSpeed > 10;
