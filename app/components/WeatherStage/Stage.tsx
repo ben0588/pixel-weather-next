@@ -194,7 +194,7 @@ export default function Stage({ weatherData, isDebugMode = false }: StageProps) 
           {/* Hover 提示 - 放在上方避免擋到下方視窗 */}
           <div className="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap pointer-events-none">
             <span className="bg-black/90 text-yellow-300 text-[10px] px-2 py-1 rounded border border-yellow-500/50 font-pixel shadow-lg">
-              📜 作者名片
+              ✨ 發現隱藏的密道
             </span>
           </div>
         </button>
