@@ -98,21 +98,24 @@ export default function DialogBox({ weatherData }: Readonly<DialogBoxProps>) {
 
 
 
-        {/* 日夜進度條 */}
+        {/* 日夜進度條 - 24小時循環：00:00(夜) → 12:00(日) → 24:00(夜) */}
         <div className="mb-3 rounded border-2 border-gray-700 bg-gray-900/50 p-2 md:mb-4">
           <div className="mb-1 flex items-center gap-2">
-            <span className="font-pixel text-[10px] text-yellow-400">
-              {currentHour >= 6 && currentHour < 18 ? "☀️" : "🌙"}
-            </span>
+            {/* 左邊：00:00 午夜 */}
+            <span className="font-pixel text-[10px]">🌙</span>
             <div className="relative h-2 flex-1 overflow-hidden rounded-full bg-gray-800">
-              {/* 日夜漸層背景 */}
+              {/* 日夜漸層背景：深藍(夜) → 淺藍(早) → 橘黃(午) → 淺藍(傍晚) → 深藍(夜) */}
               <div
                 className="absolute inset-0"
                 style={{
                   background:
-                    "linear-gradient(to right, #1a1a4a 0%, #4aa8ff 25%, #87ceeb 50%, #ff9966 75%, #1a1a4a 100%)",
+                    "linear-gradient(to right, #1a1a4a 0%, #4aa8ff 20%, #87ceeb 35%, #ffd700 50%, #ff9966 65%, #4aa8ff 80%, #1a1a4a 100%)",
                 }}
               />
+              {/* 12:00 中午標記 */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[6px]">
+                ☀️
+              </div>
               {/* 當前時間指示器 */}
               <div
                 className="absolute top-0 h-full w-1 bg-white shadow-[0_0_4px_white] transition-all duration-300"
@@ -121,9 +124,8 @@ export default function DialogBox({ weatherData }: Readonly<DialogBoxProps>) {
                 }}
               />
             </div>
-            <span className="font-pixel text-[10px] text-blue-400">
-              {currentHour >= 6 && currentHour < 18 ? "🌙" : "☀️"}
-            </span>
+            {/* 右邊：24:00 午夜 */}
+            <span className="font-pixel text-[10px]">🌙</span>
           </div>
           <p className="font-pixel text-center text-[10px]">
             {currentHour >= 6 && currentHour < 18 ? (
