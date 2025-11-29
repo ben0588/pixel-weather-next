@@ -12,6 +12,7 @@ export default function DebugMenu({ onScenarioChange }: DebugMenuProps) {
   const scenarios = [
     { id: 'reset', label: '重置', icon: '🔄' },
     { id: 'sunny', label: '大太陽', icon: '☀️' },
+    { id: 'comfort', label: '舒適白天', icon: '🌤️' },
     { id: 'rain', label: '下雨', icon: '🌧️' },
     { id: 'heavy-rain', label: '豪大雨', icon: '⛈️' },
     { id: 'snow', label: '下雪', icon: '❄️' },

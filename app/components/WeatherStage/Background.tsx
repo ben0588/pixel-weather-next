@@ -9,9 +9,10 @@ interface BackgroundProps {
   isRaining?: boolean;
   isWindy?: boolean;
   currentHour?: number; // 當前小時 (0-23)
+  forceTimeOverride?: boolean; // Debug 模式強制覆蓋時間
 }
 
-export default function Background({ isDay, weatherCode, isCloudy = false, isRaining = false, isWindy = false, currentHour }: BackgroundProps) {
+export default function Background({ isDay, weatherCode, isCloudy = false, isRaining = false, isWindy = false, currentHour, forceTimeOverride = false }: BackgroundProps) {
   const [stars, setStars] = useState<Array<{id: number, left: string, top: string, delay: string, size: number, opacity: number}>>([]);
   const [hour, setHour] = useState<number>(currentHour ?? new Date().getHours());
 
@@ -27,17 +28,22 @@ export default function Background({ isDay, weatherCode, isCloudy = false, isRai
     }
   }, [currentHour]);
 
+  // 根據本地時間計算是否為白天
+  const localIsDay = useMemo(() => {
+    return hour >= 6 && hour < 18;
+  }, [hour]);
+
+  // 實際使用的 isDay：Debug 模式用 props，否則用本地時間
+  const effectiveIsDay = forceTimeOverride ? isDay : localIsDay;
+
   // 判斷時段（簡化為早上/下午/夜晚）
-  // 優先使用 isDay props（Debug 模式可覆寫）
   const timeOfDay = useMemo(() => {
-    // 如果 isDay=true，強制白天模式
-    if (isDay) {
+    if (effectiveIsDay) {
       if (hour >= 6 && hour < 12) return 'morning';
-      return 'afternoon'; // 白天預設為下午
+      return 'afternoon';
     }
-    // 如果 isDay=false，強制夜晚模式
     return 'night';
-  }, [hour, isDay]);
+  }, [hour, effectiveIsDay]);
 
   // 根據時間和天氣獲取天空漸層
   const getSkyGradient = useMemo(() => {
@@ -77,10 +83,10 @@ export default function Background({ isDay, weatherCode, isCloudy = false, isRai
     }
   }, [isDay, weatherCode, isCloudy, isRaining, timeOfDay]);
 
-  // 判斷是否為夜晚時段（基於 isDay props）
+  // 判斷是否為夜晚時段
   const isNightTime = useMemo(() => {
-    return !isDay;
-  }, [isDay]);
+    return !effectiveIsDay;
+  }, [effectiveIsDay]);
 
   // 生成星星 (僅夜晚/傍晚後段且非陰雨天)
   useEffect(() => {

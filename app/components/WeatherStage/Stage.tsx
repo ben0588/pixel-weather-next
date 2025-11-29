@@ -14,9 +14,10 @@ interface StageProps {
     windSpeed: number;
     pop?: number; // 降雨機率
   };
+  isDebugMode?: boolean; // Debug 模式強制覆寫時間
 }
 
-export default function Stage({ weatherData }: StageProps) {
+export default function Stage({ weatherData, isDebugMode = false }: StageProps) {
   const { isDay, weatherCode, windSpeed, temperature, weather, pop = 0 } = weatherData;
   
   // 判斷天氣狀態
@@ -62,6 +63,7 @@ export default function Stage({ weatherData }: StageProps) {
         isCloudy={isCloudy}
         isRaining={isRaining}
         isWindy={isWindy}
+        forceTimeOverride={isDebugMode}
       />
       
       {/* ========== Z-10: 城鎮背景層 (Town Background) ========== */}

@@ -83,6 +83,17 @@ export default function Home() {
           isDay: true,
         });
         break;
+      case 'comfort':
+        setOverrideWeather({
+          ...baseWeather,
+          temperature: 24,
+          weather: '晴時多雲',
+          weatherCode: '02',
+          windSpeed: 3,
+          isDay: true,
+          pop: 0,
+        });
+        break;
       case 'rain':
         setOverrideWeather({
           ...baseWeather,
@@ -194,7 +205,7 @@ export default function Home() {
               
               {/* 天氣舞台 */}
               <div className="relative z-0">
-                <Stage weatherData={displayWeather} />
+                <Stage weatherData={displayWeather} isDebugMode={!!overrideWeather} />
               </div>
             </div>
 
