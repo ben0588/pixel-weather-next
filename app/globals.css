@@ -287,3 +287,102 @@ img,
   animation: cloud-drift 20s linear infinite;
 }
 
+/* ====================================
+   布告欄閃爍動畫 - 更明顯的效果
+   ==================================== */
+@keyframes bulletin-glow {
+  0%, 100% { 
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+.animate-bulletin-glow {
+  animation: bulletin-glow 2s ease-in-out infinite;
+}
+
+/* ====================================
+   像素風小十字星星閃爍動畫
+   ==================================== */
+@keyframes pixel-star-1 {
+  0%, 100% { 
+    opacity: 0.2;
+  }
+  50% { 
+    opacity: 1;
+  }
+}
+
+@keyframes pixel-star-2 {
+  0%, 100% { 
+    opacity: 0;
+  }
+  40%, 60% { 
+    opacity: 1;
+  }
+}
+
+@keyframes pixel-star-3 {
+  0%, 100% { 
+    opacity: 0.3;
+  }
+  30% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pixel-star-1 {
+  animation: pixel-star-1 2.5s ease-in-out infinite;
+}
+
+.animate-pixel-star-2 {
+  animation: pixel-star-2 3s ease-in-out infinite;
+  animation-delay: 0.8s;
+}
+
+.animate-pixel-star-3 {
+  animation: pixel-star-3 2.8s ease-in-out infinite;
+  animation-delay: 0.4s;
+}
+
+/* ====================================
+   對話框淡入動畫
+   ==================================== */
+@keyframes fade-in {
+  0% { 
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  100% { 
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out forwards;
+}
+
+/* ====================================
+   緩慢脈動動畫
+   ==================================== */
+@keyframes pulse-slow {
+  0%, 100% { 
+    box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.4);
+  }
+  50% { 
+    box-shadow: 0 0 0 4px rgba(234, 179, 8, 0);
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 2s ease-in-out infinite;
+}
+

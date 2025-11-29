@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import Image from 'next/image';
 import Background from './Background';
 import WeatherEffects from './WeatherEffects';
@@ -19,6 +19,23 @@ interface StageProps {
 
 export default function Stage({ weatherData, isDebugMode = false }: StageProps) {
   const { isDay, weatherCode, windSpeed, temperature, weather, pop = 0 } = weatherData;
+  
+  // 布告欄連結確認對話框狀態
+  const [showLinkConfirm, setShowLinkConfirm] = useState(false);
+  const authorWebsite = 'https://nextjs-personal-site-pi.vercel.app/'; // 作者個人網站
+  
+  const handleBulletinClick = () => {
+    setShowLinkConfirm(true);
+  };
+  
+  const handleConfirmLink = () => {
+    window.open(authorWebsite, '_blank', 'noopener,noreferrer');
+    setShowLinkConfirm(false);
+  };
+  
+  const handleCancelLink = () => {
+    setShowLinkConfirm(false);
+  };
   
   // 判斷天氣狀態
   const isRaining = weatherCode.includes('10') || weather?.includes('雨') || pop > 70;
@@ -100,8 +117,88 @@ export default function Stage({ weatherData, isDebugMode = false }: StageProps) 
         />
       </div>
       
-      {/* ========== Z-20: 物件層 (Objects/NPCs) ========== */}
-      <div className="absolute inset-0 z-20 pointer-events-none">
+      {/* ========== Z-50: 物件層 (Objects/NPCs) ========== */}
+      <div className="absolute inset-0 z-50">
+        {/* 布告欄互動區塊 - 可點擊前往作者網站 */}
+        {/* 位置：水井右邊的布告欄 */}
+        <button
+          onClick={handleBulletinClick}
+          className="absolute cursor-pointer group"
+          style={{
+            // 布告欄位置：畫面中心偏右（水井右邊）
+            bottom: '12%',
+            right: '26%',
+            width: '60px',
+            height: '40px',
+            // 開發時可開啟查看位置
+            // border: '2px solid red',
+          }}
+          aria-label="前往作者個人網站"
+        >
+          {/* 閃爍光暈效果 */}
+          <div 
+            className="absolute inset-0 rounded animate-bulletin-glow"
+            style={{
+              background: 'radial-gradient(ellipse at center, rgba(255,200,50,0.5) 0%, rgba(255,150,0,0.2) 60%, transparent 100%)',
+              filter: 'blur(4px)',
+            }}
+          />
+          
+          {/* 像素風白色十字星星 - 左上兩顆 + 右中兩顆 */}
+          <div className="absolute inset-0 pointer-events-none overflow-visible">
+            {/* === 左上角星星組 === */}
+            {/* 大星星 */}
+            <div className="absolute -top-1 -left-1 animate-pixel-star-1">
+              <div className="relative" style={{ width: '7px', height: '7px' }}>
+                <div className="absolute bg-white" style={{ width: '1px', height: '1px', top: '3px', left: '3px' }} />
+                <div className="absolute bg-white" style={{ width: '1px', height: '3px', top: '0px', left: '3px' }} />
+                <div className="absolute bg-white" style={{ width: '1px', height: '3px', bottom: '0px', left: '3px' }} />
+                <div className="absolute bg-white" style={{ width: '3px', height: '1px', top: '3px', left: '0px' }} />
+                <div className="absolute bg-white" style={{ width: '3px', height: '1px', top: '3px', right: '0px' }} />
+              </div>
+            </div>
+            {/* 小星星（相鄰右下） */}
+            <div className="absolute top-1 left-1 animate-pixel-star-2">
+              <div className="relative" style={{ width: '5px', height: '5px' }}>
+                <div className="absolute bg-white" style={{ width: '1px', height: '1px', top: '2px', left: '2px' }} />
+                <div className="absolute bg-white" style={{ width: '1px', height: '2px', top: '0px', left: '2px' }} />
+                <div className="absolute bg-white" style={{ width: '1px', height: '2px', bottom: '0px', left: '2px' }} />
+                <div className="absolute bg-white" style={{ width: '2px', height: '1px', top: '2px', left: '0px' }} />
+                <div className="absolute bg-white" style={{ width: '2px', height: '1px', top: '2px', right: '0px' }} />
+              </div>
+            </div>
+            
+            {/* === 右中星星組 === */}
+            {/* 大星星 */}
+            <div className="absolute top-1 -right-2 animate-pixel-star-3">
+              <div className="relative" style={{ width: '7px', height: '7px' }}>
+                <div className="absolute bg-white" style={{ width: '1px', height: '1px', top: '3px', left: '3px' }} />
+                <div className="absolute bg-white" style={{ width: '1px', height: '3px', top: '0px', left: '3px' }} />
+                <div className="absolute bg-white" style={{ width: '1px', height: '3px', bottom: '0px', left: '3px' }} />
+                <div className="absolute bg-white" style={{ width: '3px', height: '1px', top: '3px', left: '0px' }} />
+                <div className="absolute bg-white" style={{ width: '3px', height: '1px', top: '3px', right: '0px' }} />
+              </div>
+            </div>
+            {/* 小星星（相鄰左下） */}
+            <div className="absolute top-5 -right-1 animate-pixel-star-1">
+              <div className="relative" style={{ width: '5px', height: '5px' }}>
+                <div className="absolute bg-white" style={{ width: '1px', height: '1px', top: '2px', left: '2px' }} />
+                <div className="absolute bg-white" style={{ width: '1px', height: '2px', top: '0px', left: '2px' }} />
+                <div className="absolute bg-white" style={{ width: '1px', height: '2px', bottom: '0px', left: '2px' }} />
+                <div className="absolute bg-white" style={{ width: '2px', height: '1px', top: '2px', left: '0px' }} />
+                <div className="absolute bg-white" style={{ width: '2px', height: '1px', top: '2px', right: '0px' }} />
+              </div>
+            </div>
+          </div>
+          
+          {/* Hover 提示 - 放在上方避免擋到下方視窗 */}
+          <div className="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap pointer-events-none">
+            <span className="bg-black/90 text-yellow-300 text-[10px] px-2 py-1 rounded border border-yellow-500/50 font-pixel shadow-lg">
+              📜 作者名片
+            </span>
+          </div>
+        </button>
+        
         {/* 夜間路燈光效 */}
         {!isDay && (
           <>
@@ -167,6 +264,41 @@ export default function Stage({ weatherData, isDebugMode = false }: StageProps) 
           temperature={temperature}
         />
       </div>
+      
+      {/* ========== Z-50: 布告欄連結確認對話框 ========== */}
+      {showLinkConfirm && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="bg-gradient-to-b from-slate-800 to-slate-900 border-4 border-yellow-500/80 rounded-lg p-4 mx-4 max-w-xs shadow-2xl animate-fade-in">
+            {/* 對話框標題 */}
+            <div className="flex items-center gap-2 mb-3 pb-2 border-b border-yellow-500/30">
+              <span className="text-xl">📜</span>
+              <h3 className="font-pixel text-yellow-300 text-sm">冒險者公告</h3>
+            </div>
+            
+            {/* 對話框內容 */}
+            <div className="font-pixel text-white text-xs leading-relaxed mb-4 space-y-2">
+              <p>你即將離開此地，前往作者的秘密基地…</p>
+              <p className="text-yellow-200/80 text-[10px]">🔗 {authorWebsite}</p>
+            </div>
+            
+            {/* 按鈕區 */}
+            <div className="flex gap-2 justify-end">
+              <button
+                onClick={handleCancelLink}
+                className="font-pixel text-xs px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-gray-300 rounded border border-slate-500 transition-colors"
+              >
+                取消
+              </button>
+              <button
+                onClick={handleConfirmLink}
+                className="font-pixel text-xs px-3 py-1.5 bg-yellow-600 hover:bg-yellow-500 text-white rounded border border-yellow-400 transition-colors animate-pulse-slow"
+              >
+                🚩 出發！
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       
     </div>
   );
